@@ -33,7 +33,7 @@ class UserRouter extends Router {
     });
 
     application.put("/users/:id", (req, resp, next) => {
-      const options = { overwrite: true };
+      const options = { overwrite: true, runValidators: true };
       User.update({ _id: req.params.id }, req.body, options)
         .exec()
         .then(result => {
@@ -47,7 +47,7 @@ class UserRouter extends Router {
     });
 
     application.patch("/users/:id", (req, resp, next) => {
-      const options = { new: true };
+      const options = { new: true, runValidators: true };
       User.findByIdAndUpdate({ _id: req.params.id }, req.body, options)
         .then(this.render(resp, next))
         .catch(next);
