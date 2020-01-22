@@ -1,72 +1,52 @@
-import { Router } from "../common/router";
 import { User } from "./users.model";
 import * as restify from "restify";
+import { ModelRouter } from "../common/model.router";
 
-class UserRouter extends Router {
+class UserRouter extends ModelRouter<User> {
   constructor() {
-    super();
+    super(User);
 
     this.on("beforeResponse", document => {
       document.password = undefined;
     });
   }
 
+  // envelope(document) {
+  //   const resource = super.envelope(document);
+  //   return resource;
+  // }
+
+  findByEmail = (req, resp, next) => {
+    if (req.query.email) {
+      User.findByEmail(req.query.email)
+        .then(users => (users ? [users] : []))
+        .then(this.renderAll(resp, next))
+        .catch(next);
+    } else {
+      next();
+    }
+  };
+
   applyRoutes(application: restify.Server) {
-    application.get("/users", (req, resp, next) => {
-      User.find()
-        .then(this.render(resp, next))
-        .catch(next);
-    });
+    application.get({ version: "2.0.0", path: `${this.basePath}` }, [
+      this.findByEmail,
+      this.findAll
+    ]);
 
-    application.get("/users/:id", (req, resp, next) => {
-      User.findById(req.params.id)
-        .then(this.render(resp, next))
-        .catch(next);
-    });
+    application.get(
+      { version: "1.0.0", path: `${this.basePath}` },
+      this.findAll
+    );
 
-    application.post("/users", (req, resp, next) => {
-      let user = new User(req.body);
-      user
-        .save()
-        .then(this.render(resp, next))
-        .catch(next);
-    });
+    application.get(`${this.basePath}/:id`, [this.validateId, this.findById]);
 
-    application.put("/users/:id", (req, resp, next) => {
-      const options = { overwrite: true, runValidators: true };
-      User.update({ _id: req.params.id }, req.body, options)
-        .exec()
-        .then(result => {
-          if (result.n) {
-            return User.findById(req.params.id);
-          }
-          resp.send(404);
-        })
-        .then(this.render(resp, next))
-        .catch(next);
-    });
+    application.post(`${this.basePath}`, this.save);
 
-    application.patch("/users/:id", (req, resp, next) => {
-      const options = { new: true, runValidators: true };
-      User.findByIdAndUpdate({ _id: req.params.id }, req.body, options)
-        .then(this.render(resp, next))
-        .catch(next);
-    });
+    application.put(`${this.basePath}/:id`, [this.validateId, this.replace]);
 
-    application.del("/users/:id", (req, resp, next) => {
-      User.remove({ _id: req.params.id })
-        .exec()
-        .then((cmdResult: any) => {
-          if (cmdResult.result.n) {
-            resp.send(204);
-            return next();
-          }
+    application.patch(`${this.basePath}/:id`, [this.validateId, this.update]);
 
-          resp.send(404);
-          return next();
-        })
-        .catch(next);
-    });
+    application.del(`${this.basePath}/:id`, [this.validateId, this.delete]);
   }
 }
 

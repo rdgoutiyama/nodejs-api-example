@@ -1,64 +1,40 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const router_1 = require("../common/router");
 const users_model_1 = require("./users.model");
-class UserRouter extends router_1.Router {
+const model_router_1 = require("../common/model.router");
+class UserRouter extends model_router_1.ModelRouter {
     constructor() {
-        super();
+        super(users_model_1.User);
+        // envelope(document) {
+        //   const resource = super.envelope(document);
+        //   return resource;
+        // }
+        this.findByEmail = (req, resp, next) => {
+            if (req.query.email) {
+                users_model_1.User.findByEmail(req.query.email)
+                    .then(users => (users ? [users] : []))
+                    .then(this.renderAll(resp, next))
+                    .catch(next);
+            }
+            else {
+                next();
+            }
+        };
         this.on("beforeResponse", document => {
             document.password = undefined;
         });
     }
     applyRoutes(application) {
-        application.get("/users", (req, resp, next) => {
-            users_model_1.User.find()
-                .then(this.render(resp, next))
-                .catch(next);
-        });
-        application.get("/users/:id", (req, resp, next) => {
-            users_model_1.User.findById(req.params.id)
-                .then(this.render(resp, next))
-                .catch(next);
-        });
-        application.post("/users", (req, resp, next) => {
-            let user = new users_model_1.User(req.body);
-            user
-                .save()
-                .then(this.render(resp, next))
-                .catch(next);
-        });
-        application.put("/users/:id", (req, resp, next) => {
-            const options = { overwrite: true, runValidators: true };
-            users_model_1.User.update({ _id: req.params.id }, req.body, options)
-                .exec()
-                .then(result => {
-                if (result.n) {
-                    return users_model_1.User.findById(req.params.id);
-                }
-                resp.send(404);
-            })
-                .then(this.render(resp, next))
-                .catch(next);
-        });
-        application.patch("/users/:id", (req, resp, next) => {
-            const options = { new: true, runValidators: true };
-            users_model_1.User.findByIdAndUpdate({ _id: req.params.id }, req.body, options)
-                .then(this.render(resp, next))
-                .catch(next);
-        });
-        application.del("/users/:id", (req, resp, next) => {
-            users_model_1.User.remove({ _id: req.params.id })
-                .exec()
-                .then((cmdResult) => {
-                if (cmdResult.result.n) {
-                    resp.send(204);
-                    return next();
-                }
-                resp.send(404);
-                return next();
-            })
-                .catch(next);
-        });
+        application.get({ version: "2.0.0", path: `${this.basePath}` }, [
+            this.findByEmail,
+            this.findAll
+        ]);
+        application.get({ version: "1.0.0", path: `${this.basePath}` }, this.findAll);
+        application.get(`${this.basePath}/:id`, [this.validateId, this.findById]);
+        application.post(`${this.basePath}`, this.save);
+        application.put(`${this.basePath}/:id`, [this.validateId, this.replace]);
+        application.patch(`${this.basePath}/:id`, [this.validateId, this.update]);
+        application.del(`${this.basePath}/:id`, [this.validateId, this.delete]);
     }
 }
 exports.usersRouter = new UserRouter();

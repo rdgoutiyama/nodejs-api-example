@@ -65,4 +65,7 @@ const updateMiddleware = function (next) {
 userSchema.pre("save", saveMiddleware);
 userSchema.pre("findOneAndUpdate", updateMiddleware);
 userSchema.pre("update", updateMiddleware);
+userSchema.statics.findByEmail = function (email) {
+    return this.findOne({ email });
+};
 exports.User = mongoose.model("User", userSchema);
