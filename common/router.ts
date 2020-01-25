@@ -21,7 +21,7 @@ export abstract class Router extends EventEmitter {
       }
 
       resp.send(404);
-      return next();
+      return next(false);
     };
   }
 

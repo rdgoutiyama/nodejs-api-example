@@ -18,9 +18,10 @@ exports.errorHandler = (req, resp, err, done) => {
             for (let name in err.errors) {
                 messages.push({ message: err.errors[name].message });
             }
-            err.toJSON = () => {
-                return messages;
-            };
+            err.toJSON = () => ({
+                message: "Validation error while processing your request",
+                errors: messages
+            });
             break;
     }
     return done();

@@ -16,7 +16,7 @@ class Router extends events_1.EventEmitter {
                 return next();
             }
             resp.send(404);
-            return next();
+            return next(false);
         };
     }
     renderAll(resp, next, options = {}) {

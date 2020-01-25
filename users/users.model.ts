@@ -9,7 +9,7 @@ export interface User extends mongoose.Document {
   password: string;
 }
 
-export interface UserModel extends mongoose.Model {
+export interface UserModel extends mongoose.Model<User> {
   findByEmail(email: string): Promise<User>;
 }
 
