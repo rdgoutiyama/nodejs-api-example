@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const review_model_1 = require("./review.model");
 const model_router_1 = require("../common/model.router");
+const authz_handler_1 = require("../security/authz.handler");
 class ReviewsRouter extends model_router_1.ModelRouter {
     constructor() {
         super(review_model_1.Review);
@@ -20,7 +21,10 @@ class ReviewsRouter extends model_router_1.ModelRouter {
     applyRoutes(application) {
         application.get(`${this.basePath}`, this.findAll);
         application.get(`${this.basePath}/:id`, [this.validateId, this.findById]);
-        application.post(`${this.basePath}`, this.save);
+        application.post(`${this.basePath}`, [
+            authz_handler_1.authorize("user", "admin"),
+            this.save
+        ]);
     }
 }
 exports.reviewsRouter = new ReviewsRouter();

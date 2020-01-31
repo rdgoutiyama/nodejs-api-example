@@ -2,7 +2,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "target": "es2015",
-    "module": "commonjs"
+    "module": "commonjs",
+    "typeRoots": ["./node_modules/@types", "."]
   },
   "exclude": ["**/*.test.ts"]
 }

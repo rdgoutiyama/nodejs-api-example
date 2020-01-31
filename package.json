@@ -11,13 +11,17 @@
   "license": "ISC",
   "dependencies": {
     "@types/mongoose": "^5.5.36",
+    "@types/restify-errors": "^4.3.3",
     "bcrypt": "3.0.7",
+    "jsonwebtoken": "8.5.1",
     "mongoose": "^5.8.3",
     "restify": "6.3.4",
-    "restify-errors": "8.0.2"
+    "restify-errors": "^8.0.2"
   },
   "devDependencies": {
     "@types/jest": "24.9.0",
+    "@types/jest-expect-message": "^1.0.1",
+    "@types/jsonwebtoken": "8.3.7",
     "@types/restify": "^5.0.11",
     "@types/supertest": "2.0.8",
     "jest": "24.9.0",
@@ -27,10 +31,24 @@
     "typescript": "3.7.5"
   },
   "jest": {
+    "verbose": true,
     "preset": "ts-jest",
     "testEnviroment": "node",
     "globals": {
-      "address": "http://localhost:3001"
-    }
+      "address": "http://localhost:3001",
+      "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6ImFkbWluQHRlc3Rlci5jb20iLCJpYXQiOjE1MTYyMzkwMjJ9.I_ocHnQtI2SObEEol4XLqdP5b0HdykMrhLaZsRwWB1g"
+    },
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }

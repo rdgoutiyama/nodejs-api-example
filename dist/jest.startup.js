@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 require("jest");
+pm;
 const jestCli = require("jest-cli");
 const server_1 = require("./server/server");
 const environment_1 = require("./common/environment");
@@ -19,6 +20,14 @@ const beforeAllTests = () => {
     return server
         .bootstrap([users_router_1.usersRouter, reviews_router_1.reviewsRouter])
         .then(() => users_model_1.User.remove({}).exec())
+        .then(() => {
+        const user = new users_model_1.User();
+        user.email = "admin@tester.com";
+        user.name = "TESTER";
+        user.password = "123456";
+        user.profiles = ["admin", "user"];
+        return user.save();
+    })
         .then(() => review_model_1.Review.remove({}).exec());
 };
 const afterAllTests = () => {

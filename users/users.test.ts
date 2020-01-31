@@ -1,18 +1,18 @@
 import "jest";
 import * as request from "supertest";
 import { Server } from "../server/server";
-import { environment } from "../common/environment";
-import { usersRouter } from "./users.router";
-import { User } from "./users.model";
+import "jest-extended";
 
 let server: Server;
 let address: string = (<any>global).address;
+let auth: string = (<any>global).auth;
 
 test("primeiro teste", () => {});
 
 test("get /users", () => {
   return request(address)
     .get("/users")
+    .set("Authorization", auth)
     .then(response => {
       expect(response.status).toBe(200);
       expect(response.body.items).toBeInstanceOf(Array);
@@ -23,6 +23,7 @@ test("get /users", () => {
 test("post /users", () => {
   return request(address)
     .post("/users")
+    .set("Authorization", auth)
     .send({
       name: "usuario1",
       email: "usuario1@email.com",
@@ -43,6 +44,7 @@ test("post /users", () => {
 test("get /users/aaa", () => {
   return request(address)
     .get("/users/aaaa")
+    .set("Authorization", auth)
     .then(response => {
       expect(response.status).toEqual(404);
     });
@@ -51,6 +53,7 @@ test("get /users/aaa", () => {
 test("patch /users/:id", () => {
   return request(address)
     .post("/users")
+    .set("Authorization", auth)
     .send({
       name: "usuario2",
       email: "usuario2@email.com",

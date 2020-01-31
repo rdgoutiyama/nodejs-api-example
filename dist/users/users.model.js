@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema({
             validator: validators_1.validateCPF,
             message: "{PATH}: invalid cpf ({VALUE})"
         }
+    },
+    profiles: {
+        type: [String],
+        required: false
     }
 });
 const hashPassword = (obj, next) => {
@@ -65,7 +69,13 @@ const updateMiddleware = function (next) {
 userSchema.pre("save", saveMiddleware);
 userSchema.pre("findOneAndUpdate", updateMiddleware);
 userSchema.pre("update", updateMiddleware);
-userSchema.statics.findByEmail = function (email) {
-    return this.findOne({ email });
+userSchema.statics.findByEmail = function (email, projection) {
+    return this.findOne({ email }, projection);
+};
+userSchema.methods.matches = function (password) {
+    return bcrypt.compareSync(password, this.password);
+};
+userSchema.methods.hasAny = function (...profiles) {
+    return profiles.some(profile => this.profiles.indexOf(profile) !== -1);
 };
 exports.User = mongoose.model("User", userSchema);

@@ -1,5 +1,5 @@
 import "jest";
-import * as request from "supertest";
+pm;
 import * as jestCli from "jest-cli";
 import { Server } from "./server/server";
 import { environment } from "./common/environment";
@@ -21,6 +21,14 @@ const beforeAllTests = () => {
   return server
     .bootstrap([usersRouter, reviewsRouter])
     .then(() => User.remove({}).exec())
+    .then(() => {
+      const user = new User();
+      user.email = "admin@tester.com";
+      user.name = "TESTER";
+      user.password = "123456";
+      user.profiles = ["admin", "user"];
+      return user.save();
+    })
     .then(() => Review.remove({}).exec());
 };
 
