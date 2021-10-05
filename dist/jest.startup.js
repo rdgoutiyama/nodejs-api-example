@@ -36,4 +36,5 @@ const afterAllTests = () => {
 beforeAllTests()
     .then(() => jestCli.run())
     .then(() => afterAllTests())
+    .then(() => console.log('cadeia de then linda!'))
     .catch(console.error);
