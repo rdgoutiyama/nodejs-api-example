@@ -20,4 +20,5 @@ server
     console.log("====================================");
     console.error(error);
     process.exit(1);
+  
   });
