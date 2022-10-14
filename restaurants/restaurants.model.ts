@@ -38,3 +38,4 @@ export const Restaurant = mongoose.model<Restaurant>(
   "Restaurant",
   restaurantSchema
 );
+
