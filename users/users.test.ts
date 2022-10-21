@@ -60,11 +60,9 @@ test("patch /users/:id", () => {
       password: "1234566"
     })
     .then(response =>
-      request(address)
-        .patch(`/users/${response.body._id}`)
-        .send({
+      request(address).patch(`/users/${response.body._id}`).send({
           name: "usuario3-patch"
-        })
+      })
     )
     .then(response => {
       expect(response.status).toBe(200);
