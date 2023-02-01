@@ -14,7 +14,7 @@
     "@types/restify-errors": "^4.3.3",
     "bcrypt": "5.0.0",
     "jsonwebtoken": "8.5.1",
-    "mongoose": "^5.8.3",
+    "mongoose": "^5.13.15",
     "restify": "6.3.4",
     "restify-errors": "^8.0.2"
   },
